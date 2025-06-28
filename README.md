@@ -29,6 +29,6 @@ cargo run
 
 ## Repo Structure
 ```
-/mobile   → React Native app
-/backend  → Rust server (REST + WebSocket)
+/mobile ->  React Native app
+/backend -> Rust server (REST + WebSocket)
 ```
