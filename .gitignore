@@ -40,4 +40,5 @@ yarn-error.*
 app-example
 
 # rust build dir
+Cargo.lock
 target
