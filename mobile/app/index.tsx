@@ -1,15 +1,5 @@
-import { Text, View } from "react-native";
+import { MainScreen } from "../src/screens/MainScreen";
 
 export default function Index() {
-	return (
-		<View
-			style={{
-				flex: 1,
-				justifyContent: "center",
-				alignItems: "center",
-			}}
-		>
-			<Text>radius app</Text>
-		</View>
-	);
+    return <MainScreen />;
 }
