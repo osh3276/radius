@@ -3,59 +3,28 @@ package main
 import (
 	"fmt"
 	"log"
+	"main/handlers"
 	"net/http"
+	"os"
 
-	"github.com/gorilla/websocket"
+	"github.com/joho/godotenv"
 )
 
-var upgrader = websocket.Upgrader{
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
-
-func helloHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintln(w, "Hello, world!")
-}
-
-func handleWebSocket(w http.ResponseWriter, r *http.Request) {
-	log.Println("Received a request")
-	conn, err := upgrader.Upgrade(w, r, nil)
-	if err != nil {
-		log.Println("Upgrade error: ", err)
-		return
-	}
-
-	defer conn.Close()
-	log.Println("Client connected")
-
-	for {
-		mt, message, err := conn.ReadMessage()
-		if err != nil {
-			log.Println("Read error: ", err)
-			break
-		}
-
-		log.Printf("Received message: %s", message)
-
-		// echoes message
-		err = conn.WriteMessage(mt, message)
-
-		if err != nil {
-			log.Println("Write error: ", err)
-			break
-		}
-
-		if string(message) == "exit" {
-			break
-		}
-	}
-}
+var (
+	dbURL  = os.Getenv("DATABASE_URL")
+	secret = os.Getenv("SECRET_KEY")
+)
 
 func main() {
-	http.HandleFunc("/api/hello", helloHandler)
-	http.HandleFunc("/ws", handleWebSocket)
+	err := godotenv.Load()
+	if err != nil {
+		log.Println("No .env file found, using environment variables only")
+	}
 
-	fmt.Println("Server listening on :8080")
+	http.HandleFunc("/api/user", handlers.GetUser)
+	http.HandleFunc("/api/user/create", handlers.CreateUser)
+	http.HandleFunc("/health", handlers.HealthCheck)
+	http.HandleFunc("/ws", handlers.Ws)
+	fmt.Println("Listening on :8080")
 	log.Fatal(http.ListenAndServe(":8080", nil))
 }
